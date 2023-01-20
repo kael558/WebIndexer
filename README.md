@@ -34,7 +34,7 @@ Presenting Web Indexer. Developed to significantly improve the user experience b
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ### Built With
-* [AI21 Labs]((https://www.ai21.com/)
+* [AI21 Labs](https://www.ai21.com/)
 * [Streamlit](https://streamlit.io/)
 * [Cohere](https://cohere.ai/)
 * [Scrapy](https://scrapy.org/)

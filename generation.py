@@ -50,14 +50,16 @@ def post(context, question, key):
                              )
 
     response = response.json()
-    if 'completions' not in response or response['completions'][0]['data']['text'] == '':
-        return 'I don\'t know'
+    if 'completions' not in response or response['completions'][0]['data']['text'] == '' or response['completions'][0]['data']['text'].isspace():
+        return None
 
     return response['completions'][0]['data']['text'].strip()
 
 
 
 def test():
+    dataset = 'AI21'
+
     from helper import get_keys
     import cohere
     from index import get_closest_paragraphs, get_index, load_dataset
@@ -65,8 +67,8 @@ def test():
     cohere_key, ai21_key = get_keys()
     co = cohere.Client(cohere_key)
 
-    df = load_dataset('data/spring3-2.csv')
-    index = get_index(co, df, 'spring3-2.ann')
+    df = load_dataset(f'data/{dataset}.csv')
+    index = get_index(co, df, f'{dataset}.ann')
     while True:
         query = input("Enter a question: ")
         if query == 'x':

@@ -187,12 +187,3 @@ fabric.properties
 
 # sqlite database
 *.db
-
-# index files
-indexes/*
-
-# output files
-*.zip
-*.exe
-output/
-output.zip

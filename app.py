@@ -22,6 +22,7 @@ def get_files():
     for file in os.listdir("data"):
         if file.endswith(".csv"):
             files.append(file[:-4])
+    files.sort(reverse=True)
     return files
 
 

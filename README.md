@@ -108,6 +108,6 @@ Rahel Gunaratne:
 [issues-url]: https://github.com/github_username/repo_name/issues
 
 [license-shield]: https://img.shields.io/github/license/kael558/WebIndexer.svg?style=for-the-badge
-[license-url]: https://github.com/kael558/WebIndexer/blob/main/LICENSE.txt
+[license-url]: https://github.com/kael558/WebIndexer/blob/main/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
 [rahel-linkedin-url]: https://www.linkedin.com/in/rahelgunaratne/

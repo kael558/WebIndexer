@@ -26,25 +26,31 @@ def get_embeds_Cohere(text_list) -> np.ndarray:
 
 
 def get_embeds_AI21(text_list) -> np.ndarray:
+    # Breaks the strings with 2000+ characters into smaller strings
+    for i, s in enumerate(text_list):
+        if len(s) > 2000:
+            text_list.pop(i)
+            for j in range(0, len(s), 2000):
+                text_list.insert(i + j, s[j:j + 2000])
+
+    # Post 200 strings at a time
     import requests
 
     _, ai21_key = get_keys()
 
-    resp = requests.post(
-        "https://api.ai21.com/studio/v1/experimental/embed",
-        headers={"Authorization": f"Bearer {ai21_key}"},
-        json={
-            "texts": text_list
-        }
-    )
-    print(resp.content)
-    return np.array(resp['results'])
+    results = []
+    for i in range(0, len(text_list), 200):
+        response = requests.post('https://api.ai21.com/studio/v1/experimental/embed',
+                                 json={'texts': text_list[i:i + 200]},
+                                 headers={'Authorization': f'Bearer {ai21_key}'})
+        results.extend(response.json()['results'])
+    return np.array(results)
 
 
 def _build_index(df, index_filename) -> None:
     # Get embeds
     embeds = get_embeds_AI21(list(df['paragraphs']))
-    #embeds = get_embeds_Cohere(list(df['paragraphs']))
+    # embeds = get_embeds_Cohere(list(df['paragraphs']))
 
     # Create the search index, pass the size of embedding
     search_index = AnnoyIndex(embeds.shape[1], 'angular')
@@ -74,7 +80,7 @@ def get_index(df: pd.DataFrame, index_filename: str) -> AnnoyIndex:
 
 def get_closest_paragraphs(df: pd.DataFrame, index: AnnoyIndex, query: str, n: int = 100) -> pd.DataFrame:
     query_embed = get_embeds_AI21([query])
-    #query_embed = get_embeds_Cohere([query])
+    # query_embed = get_embeds_Cohere([query])
 
     # Retrieve nearest neighbors
     similar_item_ids = index.get_nns_by_vector(query_embed[0], n,

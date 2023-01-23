@@ -44,7 +44,7 @@ def get_embeds_AI21(text_list) -> np.ndarray:
 def _build_index(df, index_filename) -> None:
     # Get embeds
     embeds = get_embeds_AI21(list(df['paragraphs']))
-    # embeds = get_embeds_Cohere(list(df['paragraphs']))
+    #embeds = get_embeds_Cohere(list(df['paragraphs']))
 
     # Create the search index, pass the size of embedding
     search_index = AnnoyIndex(embeds.shape[1], 'angular')
@@ -74,6 +74,7 @@ def get_index(df: pd.DataFrame, index_filename: str) -> AnnoyIndex:
 
 def get_closest_paragraphs(df: pd.DataFrame, index: AnnoyIndex, query: str, n: int = 100) -> pd.DataFrame:
     query_embed = get_embeds_AI21([query])
+    #query_embed = get_embeds_Cohere([query])
 
     # Retrieve nearest neighbors
     similar_item_ids = index.get_nns_by_vector(query_embed[0], n,
@@ -94,7 +95,8 @@ def test():
         query = input("Enter a question: ")
         if query == 'x':
             break
-        get_closest_paragraphs(df, index, query)
+        results = get_closest_paragraphs(df, index, query)
+        print(results)
 
 
 if __name__ == '__main__':

@@ -1,21 +1,21 @@
 import os
-
 from math import floor, ceil
 
+import matplotlib.pyplot as plt
 import numpy as np
 import streamlit as st
 
 from generation import construct_context, post
-from helper import get_keys
-import cohere
 from index import get_closest_paragraphs, get_index, load_dataset
 
-import matplotlib.pyplot as plt
 
-cohere_key, ai21_key = get_keys()
-co = cohere.Client(cohere_key)
+@st.cache
+def cached_wrapper(func, *args):
+    return func(*args)
+
 
 st.title("Web Indexer")
+
 
 def get_files():
     files = []
@@ -29,12 +29,15 @@ def get_files():
 dataset = st.selectbox('Select a website', get_files())
 question = st.text_input('Enter a question:', 'What is the difference between @Autowired and @Resource?')
 
-df = load_dataset(f'{dataset}.csv')
-index = get_index(co, df, f'{dataset}.ann')
+print("cache test")
+df = cached_wrapper(load_dataset, f'{dataset}.csv')
+print("dataframe")
+print(df)
+index = get_index(df, f'{dataset}.ann')
 
 if question != "":
     num_nearest = int(st.number_input('Number of paragraphs', min_value=10, max_value=1000, value=50))
-    paragraphs = get_closest_paragraphs(co, df, index, question, num_nearest)
+    paragraphs = get_closest_paragraphs(df, index, question, num_nearest)
 
     min_distance = floor(paragraphs['distance'].min() * 10) / 10
     max_distance = ceil(paragraphs['distance'].max() * 10) / 10
@@ -42,7 +45,7 @@ if question != "":
     bins = round((max_distance - min_distance) * 10)
     ax.hist(paragraphs["distance"], range=(min_distance, max_distance), bins=bins)
     ax.set_title("Distribution of Distances")
-    ax.set_xticks(np.arange(min_distance, max_distance+0.001, 0.1))
+    ax.set_xticks(np.arange(min_distance, max_distance + 0.001, 0.1))
     ax.set_xlabel('Distance')
     ax.set_ylabel('Frequency')
     ax.axvline(x=st.session_state.get('threshold', min_distance + 0.1), linewidth=3, color='r', label='threshold')
@@ -54,8 +57,8 @@ if question != "":
         st.session_state['threshold'] = threshold
         st.experimental_rerun()
 
-    context = construct_context(paragraphs, threshold)
-    answer = post(context, question, ai21_key)
+    context = cached_wrapper(construct_context, paragraphs, threshold)
+    answer = cached_wrapper(post, context, question)
 
     st.subheader('Answer')
     answer_placeholder = st.empty()

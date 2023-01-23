@@ -29,7 +29,7 @@ def get_files():
 dataset = st.selectbox('Select a website', get_files())
 question = st.text_input('Enter a question:', 'What is the difference between @Autowired and @Resource?')
 
-df = load_dataset(f'data/{dataset}.csv')
+df = load_dataset(f'{dataset}.csv')
 index = get_index(co, df, f'{dataset}.ann')
 
 if question != "":

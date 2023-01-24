@@ -1,3 +1,5 @@
+import json
+
 from annoy import AnnoyIndex
 
 import numpy as np
@@ -39,11 +41,28 @@ def get_embeds_AI21(text_list) -> np.ndarray:
     _, ai21_key = get_keys()
 
     results = []
+
+
+
+    """
+    response = requests.post('https://api.ai21.com/studio/v1/experimental/embed',
+                             json={'texts': text_list[0: 2]},
+                             headers={'Authorization': f'Bearer {ai21_key}'})
+    print(response.json()['results'])
+    print("RESPONSE ^")
+    results.extend(response.json()['results'])
+    # Serializing json
+    json_object = json.dumps(response.json(), indent=4)
+    # Writing to sample.json
+    with open("sample.json", "w") as outfile:
+        outfile.write(json_object)"""
     for i in range(0, len(text_list), 200):
         response = requests.post('https://api.ai21.com/studio/v1/experimental/embed',
                                  json={'texts': text_list[i:i + 200]},
                                  headers={'Authorization': f'Bearer {ai21_key}'})
-        results.extend(response.json()['results'])
+        embeddings = list(map(lambda x: x["embedding"], response.json()['results']))
+        results.extend(embeddings)
+
     return np.array(results)
 
 
@@ -73,7 +92,7 @@ def get_index(df: pd.DataFrame, index_filename: str) -> AnnoyIndex:
     if not os.path.isfile(index_path):
         _build_index(df, index_path)
 
-    index = AnnoyIndex(4096, 'angular')
+    index = AnnoyIndex(768, 'angular')
     index.load(index_path)
     return index
 

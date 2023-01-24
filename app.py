@@ -29,10 +29,7 @@ def get_files():
 dataset = st.selectbox('Select a website', get_files())
 question = st.text_input('Enter a question:', 'What is the difference between @Autowired and @Resource?')
 
-print("cache test")
 df = cached_wrapper(load_dataset, f'{dataset}.csv')
-print("dataframe")
-print(df)
 index = get_index(df, f'{dataset}.ann')
 
 if question != "":

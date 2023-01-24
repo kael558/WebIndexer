@@ -36,7 +36,6 @@ Presenting Web Indexer. Developed to significantly improve the user experience b
 ### Built With
 * [AI21 Labs](https://www.ai21.com/)
 * [Streamlit](https://streamlit.io/)
-* [Cohere](https://cohere.ai/)
 * [Scrapy](https://scrapy.org/)
 * [Annoy](https://github.com/spotify/annoy)
 
